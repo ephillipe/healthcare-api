@@ -84,6 +84,14 @@ Use the provided script to upload appointments:
 ts-node scripts/upload-appointments.ts sample-appointments.csv
 ```
 
+## Screeshots
+
+![alt text](image.png)
+
+![alt text](image-1.png)
+
+![alt text](image-2.png)
+
 ## TODO improvments
 
 - We can consider spliting the CSV upload. However, we should evaluate the network increase and microservice administrations. As CSV and Appointments are inside the same scope I considered they can live in the same microservice.
