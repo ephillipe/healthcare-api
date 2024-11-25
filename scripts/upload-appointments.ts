@@ -7,15 +7,11 @@ const uploadAppointments = async (filePath: string) => {
   form.append("file", fs.createReadStream(filePath));
 
   try {
-    const response = await axios.post(
-      "http://localhost:3000/appointments",
-      form,
-      {
-        headers: {
-          ...form.getHeaders(),
-        },
-      }
-    );
+    const response = await axios.post("http://api:3000/appointments", form, {
+      headers: {
+        ...form.getHeaders(),
+      },
+    });
 
     console.log("Upload successful:", response.data);
   } catch (error) {

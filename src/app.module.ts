@@ -1,10 +1,11 @@
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
 import { BullModule, BullRootModuleOptions } from "@nestjs/bullmq";
 import { PatientsModule } from "./patients/patients.module";
 import { AppointmentsModule } from "./appointments/appointments.module";
 import { MetricsModule } from "./metrics/metrics.module";
+import { MetricsMiddleware } from "./metrics/metrics.middleware";
 
 @Module({
   imports: [
@@ -35,4 +36,8 @@ import { MetricsModule } from "./metrics/metrics.module";
     MetricsModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(MetricsMiddleware).forRoutes("*");
+  }
+}

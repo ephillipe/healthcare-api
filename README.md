@@ -16,7 +16,7 @@ A NestJS-based healthcare API for managing patient records and appointments.
 1. Start the application using Docker Compose:
 
 ```bash
-docker-compose up -d
+docker-compose up -d --build
 ```
 
 2. The following services will be available:

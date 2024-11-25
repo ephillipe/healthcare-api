@@ -15,7 +15,12 @@ export class AppointmentsProcessor extends WorkerHost {
     super();
   }
   async process(job: Job<{ csvContent: string }>) {
-    const records = parse(job.data.csvContent, {
+    return this.processCsv(job.data.csvContent, job);
+  }
+
+  async processCsv(csvContent: string, job: Job) {
+    const startTime = Date.now();
+    const records = parse(csvContent, {
       columns: true,
       skip_empty_lines: true,
     });
@@ -36,11 +41,16 @@ export class AppointmentsProcessor extends WorkerHost {
       const progress = (processedRecords / totalRecords) * 100;
       await job.updateProgress(progress);
 
-      this.metricsService.recordJobProgress(job.id, progress);
+      await this.metricsService.recordJobMetric(
+        "process-csv",
+        "completed",
+        Date.now() - startTime
+      );
     }
 
     return { processed: processedRecords };
   }
+
   @OnWorkerEvent("completed")
   onCompleted() {
     // do some stuff
