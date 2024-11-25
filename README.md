@@ -23,7 +23,10 @@ docker-compose up -d --build
 
 - API: http://localhost:3000/api
 - Grafana: http://localhost:3001
+  - Credentials admin/admin
+  - The dashboard are available inthe folder grafana/dashboard and need to be imported to be used.
 - InfluxDB: http://localhost:8086
+  - Credentials: admin/adminpassword
 
 ## API Endpoints
 
@@ -78,5 +81,11 @@ docker-compose run k6 run /scripts/http.js
 Use the provided script to upload appointments:
 
 ```bash
-ts-node scripts/upload-appointments.ts path/to/appointments.csv
+ts-node scripts/upload-appointments.ts sample-appointments.csv
 ```
+
+## TODO improvments
+
+- We can consider spliting the CSV upload. However, we should evaluate the network increase and microservice administrations. As CSV and Appointments are inside the same scope I considered they can live in the same microservice.
+- The queueing was built using BullMQ, a simple NodeJS/Redis task manager. In case of be required, RabbitMQ can be a good replacement.
+- For monitoring, I have used InfluxDB because it's designed to keep records for business and performance metrics. As a alternative we could use Prometheus,but it is primarily designed to track cloud-first metrics.
