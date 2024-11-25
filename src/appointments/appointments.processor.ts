@@ -1,20 +1,20 @@
-import { Process, Processor } from '@nestjs/bull';
-import { Job } from 'bullmq';
-import { parse } from 'csv-parse/sync';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Appointment } from './schemas/appointment.schema';
-import { MetricsService } from '../metrics/metrics.service';
+import { OnWorkerEvent, Processor, WorkerHost } from "@nestjs/bullmq";
+import { Job } from "bullmq";
+import { parse } from "csv-parse/sync";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { Appointment } from "./schemas/appointment.schema";
+import { MetricsService } from "../metrics/metrics.service";
 
-@Processor('appointments')
-export class AppointmentsProcessor {
+@Processor("appointments")
+export class AppointmentsProcessor extends WorkerHost {
   constructor(
     @InjectModel(Appointment.name) private appointmentModel: Model<Appointment>,
-    private metricsService: MetricsService,
-  ) {}
-
-  @Process('process-csv')
-  async processCsv(job: Job<{ csvContent: string }>) {
+    private metricsService: MetricsService
+  ) {
+    super();
+  }
+  async process(job: Job<{ csvContent: string }>) {
     const records = parse(job.data.csvContent, {
       columns: true,
       skip_empty_lines: true,
@@ -35,10 +35,14 @@ export class AppointmentsProcessor {
       processedRecords++;
       const progress = (processedRecords / totalRecords) * 100;
       await job.updateProgress(progress);
-      
+
       this.metricsService.recordJobProgress(job.id, progress);
     }
 
     return { processed: processedRecords };
+  }
+  @OnWorkerEvent("completed")
+  onCompleted() {
+    // do some stuff
   }
 }

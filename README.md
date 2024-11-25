@@ -21,7 +21,7 @@ docker-compose up -d
 
 2. The following services will be available:
 
-- API: http://localhost:3000
+- API: http://localhost:3000/api
 - Grafana: http://localhost:3001
 - InfluxDB: http://localhost:8086
 
